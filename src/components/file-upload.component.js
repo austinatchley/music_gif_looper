@@ -1,30 +1,63 @@
 import React from "react";
 import ImageThumb from "./image-thumb.component";
+import { convert } from "../convert";
 
-/**
- * Component to handle file upload. Works for image
- * uploads, but can be edited to work for any file.
- */
 function FileUpload() {
-    // State to store uploaded file
-    const [file, setFile] = React.useState("");
+    const outputFile = "out.mp4";
 
-    // Handles file upload event and updates state
-    function handleUpload(event) {
-        setFile(event.target.files[0]);
+    const [gifFile, setGifFile] = React.useState("");
+    const [audioFile, setAudioFile] = React.useState("");
+    //const [count, setCount] = React.useState(0);
 
-        // TODO: Do something else
+    function handleGifUpload(event) {
+        console.log(event);
+        setGifFile(event.target.files[0]);
     }
 
-    return (
-        <div id="upload-box">
-            <input type="file" onChange={handleUpload} />
-            <p>Filename: {file.name}</p>
-            <p>File type: {file.type}</p>
-            <p>File size: {file.size} bytes</p>
-            {file && <ImageThumb image={file} />}
-        </div>
-    );
+    function handleAudioUpload(event) {
+        console.log(event);
+        setAudioFile(event.target.files[0]);
+    }
+
+    async function handleConvertButtonPress(event) {
+        console.log(event);
+        if (!gifFile || !audioFile) {
+            console.error("missing a file");
+        }
+
+        await convert(gifFile, audioFile, outputFile);
+    }
+
+    return [
+        (
+            <div id="gif-upload-box">
+                <a>GIF</a>
+                <br></br>
+                <input type="file" onChange={handleGifUpload} />
+                <p>Filename: {gifFile.name}</p>
+                <p>File type: {gifFile.type}</p>
+                <p>File size: {gifFile.size} bytes</p>
+                {gifFile && <ImageThumb image={gifFile} />}
+            </div>
+        ),
+        (
+            <div id="audio-upload-box">
+                <a>AUDIO</a>
+                <br></br>
+                <input type="file" onChange={handleAudioUpload} />
+                <p>Filename: {audioFile.name}</p>
+                <p>File type: {audioFile.type}</p>
+                <p>File size: {audioFile.size} bytes</p>
+            </div>
+        ),
+        (
+            <div id="convert-button-press">
+                <button onClick={handleConvertButtonPress}>
+                    Convert
+                </button>
+            </div>
+        )
+    ];
 }
 
 export default FileUpload;
